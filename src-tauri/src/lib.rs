@@ -1,9 +1,8 @@
 use tauri::Manager;
-
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use tauri::{AppHandle, Emitter};
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn debug(value: &str) {
+    println!("Debug: {}", value);
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -55,6 +54,7 @@ pub fn run() {
             tauri::WindowEvent::Focused(focused) => {
                 // hide window whenever it loses focus
                 if !focused {
+                    window.emit("focus", "").unwrap();
                     window.hide().unwrap();
                 }
             }
@@ -62,7 +62,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![debug])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
