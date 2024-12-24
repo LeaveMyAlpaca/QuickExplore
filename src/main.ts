@@ -10,9 +10,23 @@ function debug(value: string) {
     value: value,
   });
 }
+let currentSimilarStartDirectories: string[];
+async function textInputChanged(event: Event) {
+  const text = (event.target as HTMLInputElement).value;
+  debug(`InputChanged ${text}`);
+
+  currentSimilarStartDirectories = await invoke("search_starting_directories", {
+    text,
+  });
+}
 debug("Begin");
 focus();
 
 listen("focus", (event) => {
   focus();
 });
+
+const inputElement = document.getElementById("textInput") as HTMLInputElement;
+inputElement.oninput = (event: Event) => {
+  textInputChanged(event);
+};
