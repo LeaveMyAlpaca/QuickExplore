@@ -1,3 +1,5 @@
+mod FuzzyTextSearch;
+
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
 #[tauri::command]
@@ -62,7 +64,20 @@ pub fn run() {
         })
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![debug])
+        .invoke_handler(tauri::generate_handler![debug, search_starting_directories])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn get_starting_directories() -> Vec<String> {
+    // Temp
+    return vec![
+        "test".to_string(),
+        "Test2".to_string(),
+        "yyyyooo".to_string(),
+    ];
+}
+#[tauri::command]
+fn search_starting_directories(text: String) -> Vec<String> {
+    return FuzzyTextSearch::Search(get_starting_directories(), text);
 }
