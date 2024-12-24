@@ -25,6 +25,11 @@ async function textInputChanged(event: Event) {
 }
 let maxSimilarStartDictionariesLength = 4;
 function drawSimilarStartingDirectories() {
+  const SelectStartDirectory = document.getElementById(
+    "SelectStartDirectory"
+  ) as HTMLInputElement;
+  SelectStartDirectory.hidden = false;
+
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
   // clear old childs
   layout.innerHTML = "";
@@ -73,6 +78,7 @@ const inputElement = document.getElementById("textInput") as HTMLInputElement;
 inputElement.oninput = (event: Event) => {
   textInputChanged(event);
 };
+
 let selectedDirIndex: number = 0;
 let maxSelectedDirIndex = 0;
 
