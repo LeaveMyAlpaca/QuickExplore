@@ -1,6 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
-import { warn, debug, trace, info, error } from "@tauri-apps/plugin-log";
+import { warn, trace, info, error } from "@tauri-apps/plugin-log";
 import { listen } from "@tauri-apps/api/event";
+import { publicDir } from "@tauri-apps/api/path";
+import { register } from "@tauri-apps/plugin-global-shortcut";
+
 function focus() {
   document.getElementById("textInput")?.focus();
   debug("focused");
@@ -19,6 +22,8 @@ async function textInputChanged(event: Event) {
     text,
   });
   drawSimilarStartingDirectories();
+}
+let maxSimilarStartDictionariesLength = 4;
 function drawSimilarStartingDirectories() {
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
   // clear old childs
@@ -27,6 +32,7 @@ function drawSimilarStartingDirectories() {
     currentSimilarStartDirectories.length,
     maxSimilarStartDictionariesLength
   );
+  maxSelectedDirIndex = displaysLength;
   for (let index = 0; index < displaysLength; index++) {
     const text = currentSimilarStartDirectories[index];
     createFileDisplay(
@@ -67,3 +73,18 @@ const inputElement = document.getElementById("textInput") as HTMLInputElement;
 inputElement.oninput = (event: Event) => {
   textInputChanged(event);
 };
+let selectedDirIndex: number = 0;
+let maxSelectedDirIndex = 0;
+
+await register("Alt+k", (event) => {
+  if (event.state == "Pressed") {
+    selectedDirIndex = Math.max(selectedDirIndex - 1, 0);
+    drawSimilarStartingDirectories();
+  }
+});
+await register("Alt+j", (event) => {
+  if (event.state == "Pressed") {
+    selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
+    drawSimilarStartingDirectories();
+  }
+});
