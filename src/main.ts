@@ -1,17 +1,20 @@
 import { invoke } from "@tauri-apps/api/core";
-import { warn, trace, info, error } from "@tauri-apps/plugin-log";
 import { listen } from "@tauri-apps/api/event";
-import { publicDir } from "@tauri-apps/api/path";
 import { register } from "@tauri-apps/plugin-global-shortcut";
+import { getIconPathForExtension } from "./iconsHandler";
 class startDirectorySettings {
   public name: string = "";
   public path: string = "";
   public icon_path: string = "";
   public distance: number = 0;
 }
+class fileStat {
+  public path: string = "";
+  public name: string = "";
+  public extension: string = "";
+}
 function focus() {
   document.getElementById("textInput")?.focus();
-  debug("focused");
 }
 function debug(value: string) {
   invoke("debug", {
@@ -36,8 +39,8 @@ function drawSimilarStartingDirectories() {
   SelectStartDirectory.hidden = false;
 
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
-  // clear old childs
   layout.innerHTML = "";
+  // clear old childs
   var displaysLength = Math.min(
     currentSimilarStartDirectories.length,
     maxSimilarStartDictionariesLength
@@ -71,8 +74,25 @@ function createFileDisplay(name: string, iconSrc: string, highlight: boolean) {
 
   layout.append(fileDisplay);
 }
+let connectedFiles: fileStat[];
+async function drawConnectedFiles() {
+  var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
+  layout.innerHTML = "";
 
-debug("Begin");
+  connectedFiles = await invoke("get_connected_files", {
+    currentPath: currentDirectoryPath,
+  });
+  maxSelectedDirIndex = connectedFiles.length;
+  for (let index = 0; index < connectedFiles.length; index++) {
+    const file = connectedFiles[index];
+    debug(`Extension of ${file.name} = ${file.extension}`);
+    createFileDisplay(
+      file.name,
+      getIconPathForExtension(file.extension),
+      index == selectedDirIndex
+    );
+  }
+}
 focus();
 
 listen("focus", (event) => {
@@ -83,7 +103,6 @@ const inputElement = document.getElementById("textInput") as HTMLInputElement;
 inputElement.oninput = (event: Event) => {
   textInputChanged(event);
 };
-
 let selectedDirIndex: number = 0;
 
 let maxSelectedDirIndex = 0;
@@ -91,30 +110,50 @@ let maxSelectedDirIndex = 0;
 await register("Alt+k", (event) => {
   if (event.state == "Pressed") {
     selectedDirIndex = Math.max(selectedDirIndex - 1, 0);
-    drawSimilarStartingDirectories();
+    if (selectingStartDirectory) drawSimilarStartingDirectories();
+    else drawConnectedFiles();
   }
 });
 await register("Alt+j", (event) => {
   if (event.state == "Pressed") {
     selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
-    drawSimilarStartingDirectories();
+    if (selectingStartDirectory) drawSimilarStartingDirectories();
+    else drawConnectedFiles();
   }
 });
 
 let selectingStartDirectory: boolean = true;
-let currentDirectory: String = "";
+let currentDirectoryPath: String = "";
 
-await register("Alt+l", (event) => {
-  if (event.state == "Pressed") {
+register("Alt+l", (event) => {
+  if (event.state == "Pressed" && currentSimilarStartDirectories.length != 0) {
     if (selectingStartDirectory) {
-      currentDirectory = "";
-      debug(`currentDirectory ${currentDirectory}`);
+      selectingStartDirectory = false;
+
+      currentDirectoryPath =
+        currentSimilarStartDirectories[selectedDirIndex].path;
+    } else {
+      currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}`;
     }
+    selectedDirIndex = 0;
+    drawConnectedFiles();
+
+    let textInput = document.getElementById("textInput");
+    if (textInput != null) textInput.hidden = true;
+
+    const SelectStartDirectory = document.getElementById(
+      "SelectStartDirectory"
+    ) as HTMLInputElement;
+    SelectStartDirectory.hidden = true;
   }
 });
-await register("Alt+h", (event) => {
+register("Alt+h", (event) => {
   if (event.state == "Pressed") {
     selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
-    drawSimilarStartingDirectories();
+    if (selectingStartDirectory) drawSimilarStartingDirectories();
+    else drawConnectedFiles();
+
+    let textInput = document.getElementById("textInput");
+    if (textInput != null) textInput.hidden = false;
   }
 });
