@@ -3,7 +3,12 @@ import { warn, trace, info, error } from "@tauri-apps/plugin-log";
 import { listen } from "@tauri-apps/api/event";
 import { publicDir } from "@tauri-apps/api/path";
 import { register } from "@tauri-apps/plugin-global-shortcut";
-
+class startDirectorySettings {
+  public name: string = "";
+  public path: string = "";
+  public icon_path: string = "";
+  public distance: number = 0;
+}
 function focus() {
   document.getElementById("textInput")?.focus();
   debug("focused");
@@ -13,7 +18,7 @@ function debug(value: string) {
     value: value,
   });
 }
-let currentSimilarStartDirectories: string[];
+let currentSimilarStartDirectories: startDirectorySettings[];
 async function textInputChanged(event: Event) {
   const text = (event.target as HTMLInputElement).value;
   debug(`InputChanged ${text}`);
@@ -39,9 +44,9 @@ function drawSimilarStartingDirectories() {
   );
   maxSelectedDirIndex = displaysLength;
   for (let index = 0; index < displaysLength; index++) {
-    const text = currentSimilarStartDirectories[index];
+    const startDirectory = currentSimilarStartDirectories[index];
     createFileDisplay(
-      text,
+      startDirectory.name,
       "/src/assets/typescript.svg",
       selectedDirIndex == index
     );
@@ -80,6 +85,7 @@ inputElement.oninput = (event: Event) => {
 };
 
 let selectedDirIndex: number = 0;
+
 let maxSelectedDirIndex = 0;
 
 await register("Alt+k", (event) => {
@@ -89,6 +95,24 @@ await register("Alt+k", (event) => {
   }
 });
 await register("Alt+j", (event) => {
+  if (event.state == "Pressed") {
+    selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
+    drawSimilarStartingDirectories();
+  }
+});
+
+let selectingStartDirectory: boolean = true;
+let currentDirectory: String = "";
+
+await register("Alt+l", (event) => {
+  if (event.state == "Pressed") {
+    if (selectingStartDirectory) {
+      currentDirectory = "";
+      debug(`currentDirectory ${currentDirectory}`);
+    }
+  }
+});
+await register("Alt+h", (event) => {
   if (event.state == "Pressed") {
     selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
     drawSimilarStartingDirectories();

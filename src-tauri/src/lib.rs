@@ -2,6 +2,7 @@ mod FuzzyTextSearch;
 
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
+use FuzzyTextSearch::startDirectorySettings;
 #[tauri::command]
 fn debug(value: &str) {
     println!("Debug: {}", value);
@@ -69,15 +70,37 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-fn get_starting_directories() -> Vec<String> {
+fn get_starting_directories() -> Vec<startDirectorySettings> {
+    let start1: startDirectorySettings = startDirectorySettings {
+        name: "start1".to_string(),
+        path: "Test1".to_string(),
+        icon_path: "test path".to_string(),
+        distance: 0,
+    };
+    let start2: startDirectorySettings = startDirectorySettings {
+        name: "wow".to_string(),
+        path: "Test1".to_string(),
+        icon_path: "test path".to_string(),
+        distance: 0,
+    };
+    /* let start3: startDirectorySettings = startDirectorySettings {
+        name: "joł".to_string(),
+        path: "Test1".to_string(),
+        icon_path: "test path".to_string(),
+        distance: 0,
+    }; */
+    let start4: startDirectorySettings = startDirectorySettings {
+        name: "go".to_string(),
+        path: "Test1".to_string(),
+        icon_path: "test oo".to_string(),
+        distance: 0,
+    };
     // Temp
-    return vec![
-        "test".to_string(),
-        "Test2".to_string(),
-        "yyyyooo".to_string(),
-    ];
+    return vec![start1, start2, /* start3 ,*/ start4];
 }
+
 #[tauri::command]
-fn search_starting_directories(text: String) -> Vec<String> {
-    return FuzzyTextSearch::Search(get_starting_directories(), text);
+fn search_starting_directories(text: String) -> Vec<startDirectorySettings> {
+    let allStartingDirectories = get_starting_directories();
+    return FuzzyTextSearch::search(allStartingDirectories, text);
 }

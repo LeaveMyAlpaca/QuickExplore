@@ -1,39 +1,33 @@
 use std::{cmp, collections::HashMap, f32::consts::E};
-pub fn Search(mut data: Vec<String>, phrase: String) -> Vec<String> {
-    let mut sortedData: Vec<SortStruct> = Vec::new();
-
-    for text in data.iter() {
-        let distance = WagnerFischerDistance(phrase.to_lowercase(), text.to_lowercase());
-        println!("{} distance: {}", text, distance);
-        sortedData.push(SortStruct {
-            text: text.to_string(),
-            distance: distance,
-        });
+pub fn search(
+    mut directoriesData: Vec<startDirectorySettings>,
+    phrase: String,
+) -> Vec<startDirectorySettings> {
+    for index in 0..directoriesData.len() {
+        let distance = WagnerFischerDistance(
+            phrase.to_lowercase(),
+            directoriesData[index].name.to_lowercase(),
+        );
+        directoriesData[index].distance = distance;
     }
-    sortedData.sort_by(|a, b| a.distance.cmp(&b.distance));
+    directoriesData.sort_by(|a, b| a.distance.cmp(&b.distance));
 
-    return extract_text_from_sort_struct(sortedData);
+    return directoriesData;
 }
 
-fn extract_text_from_sort_struct(structs: Vec<SortStruct>) -> Vec<String> {
-    let mut return_vec: Vec<String> = Vec::new();
-
-    for value in structs.iter() {
-        return_vec.push(value.text.to_string());
-    }
-    return return_vec;
-}
-
-struct SortStruct {
-    distance: usize,
-    text: String,
+#[derive(Clone, serde::Serialize)]
+pub struct startDirectorySettings {
+    pub name: String,
+    pub path: String,
+    pub icon_path: String,
+    pub distance: usize,
 }
 
 fn WagnerFischerDistance(s1: String, s2: String) -> usize {
-    let columns = s1.len() + 1;
-    let rows = s2.len() + 1;
     let char1: Vec<char> = s1.chars().collect();
     let char2: Vec<char> = s2.chars().collect();
+    let columns = char1.len() + 1;
+    let rows = char2.len() + 1;
 
     //* */  we know that ALWAYS first row looks like this [1,2,3,4,5....]
     let mut previousRow = vec![0; columns];
