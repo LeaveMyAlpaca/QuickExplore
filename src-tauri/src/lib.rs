@@ -78,20 +78,20 @@ pub fn run() {
 fn get_starting_directories() -> Vec<startDirectorySettings> {
     let start1: startDirectorySettings = startDirectorySettings {
         name: "start1".to_string(),
-        path: "Test1".to_string(),
+        path: "C:/Users/Leave/Documents/GitHub/".to_string(),
         icon_path: "test path".to_string(),
         distance: 0,
     };
     let start2: startDirectorySettings = startDirectorySettings {
         name: "wow".to_string(),
-        path: "Test1".to_string(),
+        path: "C:/Users/Leave/Documents/GitHub/".to_string(),
         icon_path: "test path".to_string(),
         distance: 0,
     };
 
     let start4: startDirectorySettings = startDirectorySettings {
         name: "go".to_string(),
-        path: "Test1".to_string(),
+        path: "C:/Users/Leave/Documents/GitHub/".to_string(),
         icon_path: "test oo".to_string(),
         distance: 0,
     };
