@@ -1,4 +1,4 @@
-use std::{cmp, collections::HashMap, f32::consts::E};
+use std::cmp;
 pub fn search(
     mut directoriesData: Vec<startDirectorySettings>,
     phrase: String,
