@@ -70,6 +70,7 @@ pub fn run() {
             debug,
             search_starting_directories,
             connectedFilesManager::get_connected_files,
+            connectedFilesManager::move_back_from_current_directory
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

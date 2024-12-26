@@ -61,12 +61,19 @@ function createFileDisplay(name: string, iconSrc: string, highlight: boolean) {
 
   const fileDisplay = document.createElement("fileDisplay");
   fileDisplay.className = "fileDisplay";
-  if (highlight) fileDisplay.style.border = "5px solid #555555";
+
   const icon = document.createElement("img");
   icon.src = iconSrc;
   icon.className = "fileIcon";
   fileDisplay.append(icon);
+  if (highlight) {
+    let scrollInToView = document.getElementById(
+      "scrollInToView"
+    ) as HTMLElement;
+    scrollInToView.scrollIntoView({ behavior: "instant", block: "end" });
 
+    fileDisplay.style.border = "5px solid #555555";
+  }
   const fileName = document.createElement("fileName");
   fileName.textContent = name;
   fileName.className = "fileName";
@@ -79,13 +86,14 @@ async function drawConnectedFiles() {
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
   layout.innerHTML = "";
 
+  debug(`currentPath: ${currentDirectoryPath}`);
   connectedFiles = await invoke("get_connected_files", {
     currentPath: currentDirectoryPath,
   });
+
   maxSelectedDirIndex = connectedFiles.length;
   for (let index = 0; index < connectedFiles.length; index++) {
     const file = connectedFiles[index];
-    debug(`Extension of ${file.name} = ${file.extension}`);
     createFileDisplay(
       file.name,
       getIconPathForExtension(file.extension),
@@ -93,6 +101,16 @@ async function drawConnectedFiles() {
     );
   }
 }
+async function moveBackADirectory() {
+  debug(`MoveBack ${currentDirectoryPath}`);
+  let moveBack = (await invoke("move_back_from_current_directory", {
+    dir: currentDirectoryPath,
+  })) as string;
+  debug(`MoveBack after ${moveBack}`);
+  currentDirectoryPath = moveBack;
+  drawConnectedFiles();
+}
+
 focus();
 
 listen("focus", (event) => {
@@ -133,7 +151,7 @@ register("Alt+l", (event) => {
       currentDirectoryPath =
         currentSimilarStartDirectories[selectedDirIndex].path;
     } else {
-      currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}`;
+      currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}/`;
     }
     selectedDirIndex = 0;
     drawConnectedFiles();
@@ -147,13 +165,8 @@ register("Alt+l", (event) => {
     SelectStartDirectory.hidden = true;
   }
 });
-register("Alt+h", (event) => {
-  if (event.state == "Pressed") {
-    selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
-    if (selectingStartDirectory) drawSimilarStartingDirectories();
-    else drawConnectedFiles();
-
-    let textInput = document.getElementById("textInput");
-    if (textInput != null) textInput.hidden = false;
+await register("Alt+h", (event) => {
+  if (event.state == "Pressed" && !selectingStartDirectory) {
+    moveBackADirectory();
   }
 });

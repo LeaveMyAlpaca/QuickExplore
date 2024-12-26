@@ -3,7 +3,7 @@ iconsForExtensionsMap.set("", "/src/assets/fileIcons/folder.svg");
 iconsForExtensionsMap.set("txt", "/src/assets/fileIcons/text.svg");
 iconsForExtensionsMap.set("rs", "/src/assets/fileIcons/code.svg");
 iconsForExtensionsMap.set("css", "/src/assets/fileIcons/css.svg");
-iconsForExtensionsMap.set("cs", "/src/assets/fileIcons/C#.png");
+iconsForExtensionsMap.set("cs", "/src/assets/fileIcons/cs.jpg");
 iconsForExtensionsMap.set("html", "/src/assets/fileIcons/html.svg");
 iconsForExtensionsMap.set("js", "/src/assets/fileIcons/js.svg");
 iconsForExtensionsMap.set("ts", "/src/assets/fileIcons/js.svg");
