@@ -163,6 +163,12 @@ function appendButton(
 
   parent.append(button);
 }
+function goBackToHomeDirectories() {
+  const inputElement = document.getElementById("textInput") as HTMLInputElement;
+  inputElement.value = "";
+  selectingStartDirectory = true;
+  drawSimilarStartingDirectories();
+}
 focus();
 
 listen("focus", (event) => {
@@ -173,6 +179,13 @@ const inputElement = document.getElementById("textInput") as HTMLInputElement;
 inputElement.oninput = (event: Event) => {
   textInputChanged(event);
 };
+const homeDir = document.getElementById(
+  "backToHmeDirectoryButton"
+) as HTMLElement;
+homeDir.onclick = () => {
+  goBackToHomeDirectories();
+};
+
 let selectedDirIndex: number = 0;
 
 let maxSelectedDirIndex = 0;
