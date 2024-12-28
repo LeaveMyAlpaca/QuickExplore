@@ -11,14 +11,21 @@
   <h1 style="justify-self: center" id="SelectStartDirectory">
     Select start directory:
   </h1>
+  <div class="upperBar">
+    <button class="button" id="backToHmeDirectoryButton">
+      <img src="/src/assets/home.svg" />
+    </button>
+  </div>
   <div class="textInputContainer">
     <input
       class="textInput"
       id="textInput"
       placeholder="Enter a name..."
+      autocomplete="off"
       autofocus
     />
   </div>
+
   <body id="body">
     <div class="filesDisplayLayout" id="filesDisplayLayout">
       <!-- <div class="fileDisplay" id="fileDisplay">

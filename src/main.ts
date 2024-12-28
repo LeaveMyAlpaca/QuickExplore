@@ -2,6 +2,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { register } from "@tauri-apps/plugin-global-shortcut";
 import { getIconPathForExtension } from "./iconsHandler";
+import { OpenInVsCode, CreateStartDirectoryInHere } from "./clickHandler";
+
+import { publicDir } from "@tauri-apps/api/path";
+
 class startDirectorySettings {
   public name: string = "";
   public path: string = "";
@@ -16,7 +20,7 @@ class fileStat {
 function focus() {
   document.getElementById("textInput")?.focus();
 }
-function debug(value: string) {
+export function debug(value: string) {
   invoke("debug", {
     value: value,
   });
@@ -50,13 +54,20 @@ function drawSimilarStartingDirectories() {
     const startDirectory = currentSimilarStartDirectories[index];
     createFileDisplay(
       startDirectory.name,
-      "/src/assets/typescript.svg",
+      startDirectory.icon_path,
       selectedDirIndex == index
     );
   }
 }
 
-function createFileDisplay(name: string, iconSrc: string, highlight: boolean) {
+function createFileDisplay(
+  name: string,
+  iconSrc: string,
+  highlight: boolean,
+  openInVsCode: boolean = true,
+  createStartDirectoryButton: boolean = false,
+  path: string = ""
+) {
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
 
   const fileDisplay = document.createElement("fileDisplay");
@@ -78,6 +89,22 @@ function createFileDisplay(name: string, iconSrc: string, highlight: boolean) {
   fileName.textContent = name;
   fileName.className = "fileName";
   fileDisplay.append(fileName);
+  if (createStartDirectoryButton) {
+    appendButton(
+      fileDisplay,
+      () => CreateStartDirectoryInHere(path),
+      "/src/assets/fileIcons/folder.svg",
+      "add to start directories"
+    );
+  }
+  if (openInVsCode) {
+    appendButton(
+      fileDisplay,
+      () => OpenInVsCode(path),
+      "/src/assets/Button icons/vs code.jpg",
+      "open in vs code"
+    );
+  }
 
   layout.append(fileDisplay);
 }
@@ -97,7 +124,10 @@ async function drawConnectedFiles() {
     createFileDisplay(
       file.name,
       getIconPathForExtension(file.extension),
-      index == selectedDirIndex
+      index == selectedDirIndex,
+      true,
+      true,
+      file.path
     );
   }
 }
@@ -110,7 +140,29 @@ async function moveBackADirectory() {
   currentDirectoryPath = moveBack;
   drawConnectedFiles();
 }
+function appendButton(
+  parent: HTMLElement,
+  onClick: () => void,
+  src: string,
+  tooltipContent: string
+) {
+  const button = document.createElement("button");
+  button.onclick = () => onClick();
+  button.className = "directoryButton";
+  button.classList.add("button");
 
+  const buttonsIcon = document.createElement("img");
+  buttonsIcon.src = src;
+  buttonsIcon.width = 50;
+  buttonsIcon.height = 50;
+  button.append(buttonsIcon);
+  const tooltip = document.createElement("span");
+  tooltip.className = "tooltip";
+  tooltip.textContent = tooltipContent;
+  button.append(tooltip);
+
+  parent.append(button);
+}
 focus();
 
 listen("focus", (event) => {

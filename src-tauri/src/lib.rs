@@ -1,3 +1,4 @@
+mod CommandRun;
 mod connectedFilesManager;
 mod fuzzyTextSearch;
 
@@ -70,7 +71,8 @@ pub fn run() {
             debug,
             search_starting_directories,
             connectedFilesManager::get_connected_files,
-            connectedFilesManager::move_back_from_current_directory
+            connectedFilesManager::move_back_from_current_directory,
+            CommandRun::RunCommand
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -78,26 +80,13 @@ pub fn run() {
 
 fn get_starting_directories() -> Vec<startDirectorySettings> {
     let start1: startDirectorySettings = startDirectorySettings {
-        name: "start1".to_string(),
-        path: "C:/Users/Leave/Documents/GitHub/".to_string(),
-        icon_path: "test path".to_string(),
-        distance: 0,
-    };
-    let start2: startDirectorySettings = startDirectorySettings {
-        name: "wow".to_string(),
-        path: "C:/Users/Leave/Documents/GitHub/".to_string(),
-        icon_path: "test path".to_string(),
-        distance: 0,
-    };
-
-    let start4: startDirectorySettings = startDirectorySettings {
-        name: "go".to_string(),
-        path: "C:/Users/Leave/Documents/GitHub/".to_string(),
-        icon_path: "test oo".to_string(),
+        name: "users".to_string(),
+        path: "c:/users/".to_string(),
+        icon_path: "/src/assets/fileIcons/folder.svg".to_string(),
         distance: 0,
     };
     // Temp
-    return vec![start1, start2, start4];
+    return vec![start1];
 }
 
 #[tauri::command]
