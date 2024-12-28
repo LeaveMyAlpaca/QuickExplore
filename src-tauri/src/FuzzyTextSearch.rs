@@ -1,8 +1,9 @@
 use std::cmp;
+
 pub fn search(
-    mut directoriesData: Vec<startDirectorySettings>,
+    mut directoriesData: Vec<StartDirectorySettings>,
     phrase: String,
-) -> Vec<startDirectorySettings> {
+) -> Vec<StartDirectorySettings> {
     for index in 0..directoriesData.len() {
         let distance = WagnerFischerDistance(
             phrase.to_lowercase(),
@@ -16,7 +17,7 @@ pub fn search(
 }
 
 #[derive(Clone, serde::Serialize)]
-pub struct startDirectorySettings {
+pub struct StartDirectorySettings {
     pub name: String,
     pub path: String,
     pub icon_path: String,

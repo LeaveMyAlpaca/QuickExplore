@@ -1,8 +1,8 @@
 mod CommandRun;
+mod FuzzyTextSearch;
 mod connectedFilesManager;
-mod fuzzyTextSearch;
+mod homeDirectories;
 
-use fuzzyTextSearch::startDirectorySettings;
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
 #[tauri::command]
@@ -78,19 +78,9 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-fn get_starting_directories() -> Vec<startDirectorySettings> {
-    let start1: startDirectorySettings = startDirectorySettings {
-        name: "users".to_string(),
-        path: "c:/users/".to_string(),
-        icon_path: "/src/assets/fileIcons/folder.svg".to_string(),
-        distance: 0,
-    };
-    // Temp
-    return vec![start1];
-}
-
 #[tauri::command]
-fn search_starting_directories(text: String) -> Vec<startDirectorySettings> {
-    let allStartingDirectories = get_starting_directories();
-    return fuzzyTextSearch::search(allStartingDirectories, text);
+fn search_starting_directories(text: String) -> Vec<FuzzyTextSearch::StartDirectorySettings> {
+    homeDirectories::save_starting_directories();
+    let allStartingDirectories = homeDirectories::get_starting_directories();
+    return FuzzyTextSearch::search(allStartingDirectories, text);
 }
