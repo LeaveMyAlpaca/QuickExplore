@@ -1,14 +1,21 @@
 use std::cmp;
 
-pub fn search(
-    mut directoriesData: Vec<StartDirectorySettings>,
-    phrase: String,
-) -> Vec<StartDirectorySettings> {
+pub fn search(mut directoriesData: Vec<fileStat>, phrase: String) -> Vec<fileStat> {
+    let mut biggestDirectoryName: usize = 0;
     for index in 0..directoriesData.len() {
-        let distance = WagnerFischerDistance(
-            phrase.to_lowercase(),
-            directoriesData[index].name.to_lowercase(),
-        );
+        let size = directoriesData[index].name.len();
+        if (biggestDirectoryName < size) {
+            biggestDirectoryName = size;
+        }
+    }
+    for index in 0..directoriesData.len() {
+        let mut s2 = directoriesData[index].name.to_lowercase();
+        let amountToAdd = biggestDirectoryName - s2.len();
+        for _ in 0..amountToAdd {
+            s2 += " "
+        }
+
+        let distance = WagnerFischerDistance(phrase.to_lowercase(), s2);
         directoriesData[index].distance = distance;
     }
     directoriesData.sort_by(|a, b| a.distance.cmp(&b.distance));
@@ -17,11 +24,12 @@ pub fn search(
 }
 
 #[derive(Clone, serde::Serialize)]
-pub struct StartDirectorySettings {
+pub struct fileStat {
     pub name: String,
     pub path: String,
     pub icon_path: String,
     pub distance: usize,
+    pub extension: String,
 }
 
 fn WagnerFischerDistance(s1: String, s2: String) -> usize {

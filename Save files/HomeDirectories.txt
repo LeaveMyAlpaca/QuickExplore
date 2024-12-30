@@ -1,3 +1,6 @@
-users
-c:/users/
-/src/assets/fileIcons/folder.svg
+GitHub
+C:\Users\f\Documents\GitHub
+C:\Users\f\Documents\GitHub\QuickExplore\src\assets\fileIcons\git.svg
+Advanced-4x-framework
+C:\Users\f\Documents\GitHub\Advanced-4x-framework
+

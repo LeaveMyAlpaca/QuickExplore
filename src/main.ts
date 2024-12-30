@@ -4,19 +4,14 @@ import { register } from "@tauri-apps/plugin-global-shortcut";
 import { getIconPathForExtension } from "./iconsHandler";
 import { OpenInVsCode, CreateStartDirectoryInHere } from "./clickHandler";
 
-import { publicDir } from "@tauri-apps/api/path";
-
-class startDirectorySettings {
+class fileStat {
   public name: string = "";
   public path: string = "";
   public icon_path: string = "";
   public distance: number = 0;
-}
-class fileStat {
-  public path: string = "";
-  public name: string = "";
   public extension: string = "";
 }
+
 function focus() {
   document.getElementById("textInput")?.focus();
 }
@@ -25,15 +20,21 @@ export function debug(value: string) {
     value: value,
   });
 }
-let currentSimilarStartDirectories: startDirectorySettings[];
+let currentSimilarStartDirectories: fileStat[];
 async function textInputChanged(event: Event) {
-  const text = (event.target as HTMLInputElement).value;
-  debug(`InputChanged ${text}`);
+  if (selectingStartDirectory) {
+    const text = (event.target as HTMLInputElement).value;
 
-  currentSimilarStartDirectories = await invoke("search_starting_directories", {
-    text,
-  });
-  drawSimilarStartingDirectories();
+    currentSimilarStartDirectories = await invoke(
+      "search_starting_directories",
+      {
+        text,
+      }
+    );
+    drawSimilarStartingDirectories();
+  } else {
+    drawConnectedFiles();
+  }
 }
 let maxSimilarStartDictionariesLength = 4;
 function drawSimilarStartingDirectories() {
@@ -45,6 +46,7 @@ function drawSimilarStartingDirectories() {
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
   layout.innerHTML = "";
   // clear old childs
+
   var displaysLength = Math.min(
     currentSimilarStartDirectories.length,
     maxSimilarStartDictionariesLength
@@ -92,7 +94,7 @@ function createFileDisplay(
   if (createStartDirectoryButton) {
     appendButton(
       fileDisplay,
-      () => CreateStartDirectoryInHere(path),
+      () => CreateStartDirectoryInHere(path, name),
       "/src/assets/fileIcons/folder.svg",
       "add to start directories"
     );
@@ -113,9 +115,12 @@ async function drawConnectedFiles() {
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
   layout.innerHTML = "";
 
-  debug(`currentPath: ${currentDirectoryPath}`);
+  const inputElement = document.getElementById("textInput") as HTMLInputElement;
+  let currentText = inputElement.value;
+
   connectedFiles = await invoke("get_connected_files", {
     currentPath: currentDirectoryPath,
+    currentText,
   });
 
   maxSelectedDirIndex = connectedFiles.length;
@@ -163,10 +168,18 @@ function appendButton(
 
   parent.append(button);
 }
-function goBackToHomeDirectories() {
+async function goBackToHomeDirectories() {
   const inputElement = document.getElementById("textInput") as HTMLInputElement;
   inputElement.value = "";
+  inputElement.hidden = false;
   selectingStartDirectory = true;
+  currentSimilarStartDirectories = await invoke("search_starting_directories", {
+    text: "",
+  });
+  debug(
+    `currentSimilarStartDirectories ${currentSimilarStartDirectories.length}`
+  );
+
   drawSimilarStartingDirectories();
 }
 focus();
@@ -221,8 +234,10 @@ register("Alt+l", (event) => {
     selectedDirIndex = 0;
     drawConnectedFiles();
 
-    let textInput = document.getElementById("textInput");
-    if (textInput != null) textInput.hidden = true;
+    const inputElement = document.getElementById(
+      "textInput"
+    ) as HTMLInputElement;
+    inputElement.value = "";
 
     const SelectStartDirectory = document.getElementById(
       "SelectStartDirectory"

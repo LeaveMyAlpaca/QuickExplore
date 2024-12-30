@@ -1,13 +1,23 @@
-use std::fs;
-
+use crate::{homeDirectories, FuzzyTextSearch};
+use std::fs::{self, ReadDir};
 #[tauri::command]
-pub fn get_connected_files(currentPath: String) -> Vec<fileStat> {
-    let mut return_vec: Vec<fileStat> = Vec::new();
-    let paths = fs::read_dir(&currentPath).unwrap();
+pub fn get_connected_files(
+    mut currentPath: String,
+    currentText: String,
+) -> Vec<FuzzyTextSearch::fileStat> {
+    let mut return_vec: Vec<FuzzyTextSearch::fileStat> = Vec::new();
+    // currentPath = "c:/users/".to_string();
+    let unCheckedPath = fs::read_dir(&currentPath);
+    let paths: ReadDir;
+    if (unCheckedPath.is_err()) {
+        paths = fs::read_dir("C:/users").unwrap();
+    } else {
+        paths = unCheckedPath.unwrap();
+    }
 
     for dir in paths {
         let path = dir.unwrap().path().as_path().to_str().unwrap().to_string();
-        let splittedPath = path.split(&['/']);
+        let splittedPath = path.split(&['/', '\\']);
         let fileName = splittedPath.last().unwrap();
         let nameAndExtension = fileName.split(".");
 
@@ -17,14 +27,16 @@ pub fn get_connected_files(currentPath: String) -> Vec<fileStat> {
         } else {
             extension = "".to_string();
         }
-        return_vec.push(fileStat {
+        return_vec.push(FuzzyTextSearch::fileStat {
             path: path.to_string(),
             name: fileName.to_string(),
             extension,
+            icon_path: "".to_string(),
+            distance: 0,
         });
     }
 
-    return return_vec;
+    return FuzzyTextSearch::search(return_vec, currentText);
 }
 
 #[tauri::command]
@@ -32,6 +44,9 @@ pub fn move_back_from_current_directory(dir: String) -> String {
     let replacedPath = dir.replace("\\", "/");
     println!("RS-> {}", replacedPath);
     let splitted_directory = replacedPath.split("/");
+    if splitted_directory.clone().count() == 1 {
+        return dir;
+    }
     let mut outputPath = "".to_string();
     let mut index = 0;
     let maxIndex = splitted_directory.clone().count() - 2;
@@ -44,11 +59,4 @@ pub fn move_back_from_current_directory(dir: String) -> String {
         index += 1;
     }
     return outputPath.to_string();
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct fileStat {
-    pub path: String,
-    pub name: String,
-    pub extension: String,
 }

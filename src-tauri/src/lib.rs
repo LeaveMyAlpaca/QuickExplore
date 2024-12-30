@@ -1,6 +1,7 @@
 mod CommandRun;
 mod FuzzyTextSearch;
 mod connectedFilesManager;
+pub mod fuzzyTextSearch;
 mod homeDirectories;
 
 use tauri::Manager;
@@ -72,15 +73,16 @@ pub fn run() {
             search_starting_directories,
             connectedFilesManager::get_connected_files,
             connectedFilesManager::move_back_from_current_directory,
-            CommandRun::RunCommand
+            CommandRun::RunCommand,
+            homeDirectories::addStartDirectories
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
 #[tauri::command]
-fn search_starting_directories(text: String) -> Vec<FuzzyTextSearch::StartDirectorySettings> {
-    homeDirectories::save_starting_directories();
-    let allStartingDirectories = homeDirectories::get_starting_directories();
+fn search_starting_directories(text: String) -> Vec<FuzzyTextSearch::fileStat> {
+    let allStartingDirectories: Vec<FuzzyTextSearch::fileStat> =
+        homeDirectories::get_starting_directories();
     return FuzzyTextSearch::search(allStartingDirectories, text);
 }
