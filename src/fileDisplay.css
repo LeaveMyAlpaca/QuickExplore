@@ -14,8 +14,8 @@
   font-size: xx-large;
 }
 .fileDisplayButton {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
 }
 .filesDisplayLayout {
   display: flex;
@@ -42,11 +42,14 @@
 .directoryButton:hover .tooltip {
   visibility: visible;
 }
+.body {
+  background: transparent;
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #2f2f2f;
+    background: transparent;
   }
 
   a:hover {

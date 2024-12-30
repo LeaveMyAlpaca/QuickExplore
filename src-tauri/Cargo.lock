@@ -2988,6 +2988,7 @@ dependencies = [
  "tauri-plugin-log",
  "tauri-plugin-opener",
  "tauri-plugin-positioner",
+ "window-vibrancy",
 ]
 
 [[package]]

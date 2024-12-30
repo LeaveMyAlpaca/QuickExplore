@@ -4,29 +4,37 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="/src/styles.css" />
     <link rel="stylesheet" href="/src/fileDisplay.css" />
+    <link rel="stylesheet" href="/src/textInput.scss" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
     <script type="module" src="/src/main.ts" defer></script>
+    <style>
+      html,
+      body {
+        background: transparent;
+      }
+    </style>
   </head>
-  <h1 style="justify-self: center" id="SelectStartDirectory">
-    Select start directory:
-  </h1>
-  <div class="upperBar">
-    <button class="button" id="backToHmeDirectoryButton">
-      <img src="/src/assets/home.svg" />
-    </button>
-  </div>
-  <div class="textInputContainer">
-    <input
-      class="textInput"
-      id="textInput"
-      placeholder="Enter a name..."
-      autocomplete="off"
-      autofocus
-    />
-  </div>
 
   <body id="body">
+    <h1 style="justify-self: center" id="SelectStartDirectory">
+      Select start directory:
+    </h1>
+    <div class="upperBar">
+      <button class="button" id="backToHmeDirectoryButton">
+        <img src="/src/assets/home.svg" />
+      </button>
+    </div>
+    <div class="textInputContainer">
+      <input
+        class="textInput"
+        id="textInput"
+        placeholder="Enter a name..."
+        autocomplete="off"
+        autofocus
+      />
+    </div>
+
     <div class="filesDisplayLayout" id="filesDisplayLayout">
       <!-- <div class="fileDisplay" id="fileDisplay">
       <img src="src/assets/tauri.svg" class="fileIcon">

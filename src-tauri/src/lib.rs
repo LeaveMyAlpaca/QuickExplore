@@ -3,9 +3,9 @@ mod FuzzyTextSearch;
 mod connectedFilesManager;
 pub mod fuzzyTextSearch;
 mod homeDirectories;
-
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
+use window_vibrancy::*;
 #[tauri::command]
 fn debug(value: &str) {
     println!("Debug: {}", value);
@@ -17,6 +17,16 @@ pub fn run() {
         .setup(|app| {
             #[cfg(desktop)]
             {
+                let mut win = app.get_webview_window("main").unwrap();
+
+                #[cfg(target_os = "macos")]
+                apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
+                    .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+
+                #[cfg(target_os = "windows")]
+                apply_acrylic(&win, Some((0, 0, 0, 0)))
+                    .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
+
                 app.handle().plugin(tauri_plugin_positioner::init());
                 tauri::tray::TrayIconBuilder::new()
                     .on_tray_icon_event(|tray_handle, event| {
@@ -25,7 +35,6 @@ pub fn run() {
                     .build(app)?;
                 use tauri_plugin_positioner::{Position, WindowExt};
 
-                let mut win = app.get_webview_window("main").unwrap();
                 let _ = win.as_ref().window().move_window(Position::TopCenter);
 
                 use tauri_plugin_global_shortcut::{
@@ -37,7 +46,6 @@ pub fn run() {
                 app.handle().plugin(
                     tauri_plugin_global_shortcut::Builder::new()
                         .with_handler(move |_app, shortcut, event| {
-                            println!("{:?}", shortcut);
                             if shortcut == &ctrl_n_shortcut {
                                 match event.state() {
                                     ShortcutState::Pressed => {

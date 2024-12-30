@@ -85,7 +85,8 @@ function createFileDisplay(
     ) as HTMLElement;
     scrollInToView.scrollIntoView({ behavior: "instant", block: "end" });
 
-    fileDisplay.style.border = "5px solid #555555";
+    fileDisplay.style.border = "5px solid rgb(218, 169, 35)";
+    fileDisplay.style.background = "5px solid rgb(218, 169, 35)";
   }
   const fileName = document.createElement("fileName");
   fileName.textContent = name;
