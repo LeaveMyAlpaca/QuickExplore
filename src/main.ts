@@ -1,6 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { register } from "@tauri-apps/plugin-global-shortcut";
+import {
+  register,
+  unregister,
+  unregisterAll,
+} from "@tauri-apps/plugin-global-shortcut";
 import { getIconPathForExtension } from "./iconsHandler";
 import { OpenInVsCode, CreateStartDirectoryInHere } from "./clickHandler";
 
@@ -12,9 +16,15 @@ class fileStat {
   public extension: string = "";
 }
 
-function focus() {
+async function focus() {
   document.getElementById("textInput")?.focus();
+  await RegisterAllShortcuts();
 }
+async function unFocus() {
+  await unregister(["Alt+k", "Alt+j", "Alt+l", "Alt+h"]);
+  debug("unFocus");
+}
+
 export function debug(value: string) {
   invoke("debug", {
     value: value,
@@ -189,6 +199,10 @@ listen("focus", (event) => {
   focus();
 });
 
+listen("unFocus", (event) => {
+  unFocus();
+});
+
 const inputElement = document.getElementById("textInput") as HTMLInputElement;
 inputElement.oninput = (event: Event) => {
   textInputChanged(event);
@@ -203,51 +217,58 @@ homeDir.onclick = () => {
 let selectedDirIndex: number = 0;
 
 let maxSelectedDirIndex = 0;
-
-await register("Alt+k", (event) => {
-  if (event.state == "Pressed") {
-    selectedDirIndex = Math.max(selectedDirIndex - 1, 0);
-    if (selectingStartDirectory) drawSimilarStartingDirectories();
-    else drawConnectedFiles();
-  }
-});
-await register("Alt+j", (event) => {
-  if (event.state == "Pressed") {
-    selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
-    if (selectingStartDirectory) drawSimilarStartingDirectories();
-    else drawConnectedFiles();
-  }
-});
-
 let selectingStartDirectory: boolean = true;
 let currentDirectoryPath: String = "";
 
-register("Alt+l", (event) => {
-  if (event.state == "Pressed" && currentSimilarStartDirectories.length != 0) {
-    if (selectingStartDirectory) {
-      selectingStartDirectory = false;
-
-      currentDirectoryPath =
-        currentSimilarStartDirectories[selectedDirIndex].path;
-    } else {
-      currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}/`;
+async function RegisterAllShortcuts() {
+  await register("Alt+k", (event) => {
+    if (event.state == "Pressed") {
+      selectedDirIndex = Math.max(selectedDirIndex - 1, 0);
+      if (selectingStartDirectory) drawSimilarStartingDirectories();
+      else drawConnectedFiles();
     }
-    selectedDirIndex = 0;
-    drawConnectedFiles();
+  });
+  await register("Alt+j", (event) => {
+    if (event.state == "Pressed") {
+      selectedDirIndex = Math.min(
+        selectedDirIndex + 1,
+        maxSelectedDirIndex - 1
+      );
+      if (selectingStartDirectory) drawSimilarStartingDirectories();
+      else drawConnectedFiles();
+    }
+  });
 
-    const inputElement = document.getElementById(
-      "textInput"
-    ) as HTMLInputElement;
-    inputElement.value = "";
+  register("Alt+l", (event) => {
+    if (
+      event.state == "Pressed" &&
+      currentSimilarStartDirectories.length != 0
+    ) {
+      if (selectingStartDirectory) {
+        selectingStartDirectory = false;
 
-    const SelectStartDirectory = document.getElementById(
-      "SelectStartDirectory"
-    ) as HTMLInputElement;
-    SelectStartDirectory.hidden = true;
-  }
-});
-await register("Alt+h", (event) => {
-  if (event.state == "Pressed" && !selectingStartDirectory) {
-    moveBackADirectory();
-  }
-});
+        currentDirectoryPath =
+          currentSimilarStartDirectories[selectedDirIndex].path;
+      } else {
+        currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}/`;
+      }
+      selectedDirIndex = 0;
+      drawConnectedFiles();
+
+      const inputElement = document.getElementById(
+        "textInput"
+      ) as HTMLInputElement;
+      inputElement.value = "";
+
+      const SelectStartDirectory = document.getElementById(
+        "SelectStartDirectory"
+      ) as HTMLInputElement;
+      SelectStartDirectory.hidden = true;
+    }
+  });
+  await register("Alt+h", (event) => {
+    if (event.state == "Pressed" && !selectingStartDirectory) {
+      moveBackADirectory();
+    }
+  });
+}

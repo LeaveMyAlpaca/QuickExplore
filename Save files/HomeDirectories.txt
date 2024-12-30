@@ -4,3 +4,6 @@ C:\Users\f\Documents\GitHub\QuickExplore\src\assets\fileIcons\git.svg
 Advanced-4x-framework
 C:\Users\f\Documents\GitHub\Advanced-4x-framework
 
+QuickExplore
+C:/Users/f/Documents/GitHub/QuickExplore
+

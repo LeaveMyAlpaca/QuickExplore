@@ -49,6 +49,8 @@ pub fn run() {
                             if shortcut == &ctrl_n_shortcut {
                                 match event.state() {
                                     ShortcutState::Pressed => {
+                                        win.emit("focus", "").unwrap();
+
                                         let _ = win.as_ref().window().show();
                                         win.as_ref().window().set_focus();
                                     }
@@ -68,7 +70,8 @@ pub fn run() {
             tauri::WindowEvent::Focused(focused) => {
                 // hide window whenever it loses focus
                 if !focused {
-                    window.emit("focus", "").unwrap();
+                    window.emit("unFocus", "").unwrap();
+
                     window.hide().unwrap();
                 }
             }
