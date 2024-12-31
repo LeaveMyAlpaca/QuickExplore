@@ -1,19 +1,19 @@
 use std::cmp;
 
 pub fn search(mut directoriesData: Vec<fileStat>, phrase: String) -> Vec<fileStat> {
-    let mut biggestDirectoryName: usize = 0;
+    /* let mut biggestDirectoryName: usize = 0;
     for index in 0..directoriesData.len() {
         let size = directoriesData[index].name.len();
         if (biggestDirectoryName < size) {
             biggestDirectoryName = size;
         }
-    }
+    } */
     for index in 0..directoriesData.len() {
         let mut s2 = directoriesData[index].name.to_lowercase();
-        let amountToAdd = biggestDirectoryName - s2.len();
+        /* let amountToAdd = biggestDirectoryName - s2.len();
         for _ in 0..amountToAdd {
             s2 += " "
-        }
+        } */
 
         let distance = WagnerFischerDistance(phrase.to_lowercase(), s2);
         directoriesData[index].distance = distance;
