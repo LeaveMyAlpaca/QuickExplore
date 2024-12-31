@@ -124,14 +124,14 @@ function createFileDisplay(
     appendButton(
       fileDisplay,
       () => OpenInVsCode(path),
-      "/src/assets/Button icons/vs code.jpg",
+      "/src/assets/Button icons/vs code.png",
       "open in vs code"
     );
   }
 
   layout.append(fileDisplay);
 }
-async function drawConnectedFiles() {
+export async function drawConnectedFiles() {
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
   layout.innerHTML = "";
 

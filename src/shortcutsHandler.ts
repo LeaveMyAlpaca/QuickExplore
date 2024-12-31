@@ -3,6 +3,7 @@ import {
   connectedFiles,
   currentDirectoryPath,
   currentSimilarStartDirectories,
+  debug,
   GoBackToHomeDirectories,
   moveBackADirectory,
   MoveDown,
@@ -11,7 +12,12 @@ import {
   selectedDirIndex,
   selectingStartDirectory,
 } from "./main";
-import { OpenInExplorer, OpenInVsCode, OpenWithPWSH } from "./clickHandler";
+import {
+  OpenInExplorer,
+  OpenInVsCode,
+  OpenWithPWSH,
+  RemoveFile,
+} from "./clickHandler";
 
 const goUpShortcut = "Alt+k";
 const goDownShortcut = "Alt+j";
@@ -63,7 +69,15 @@ export async function RegisterAllShortcuts() {
   });
   await register(openWithExplorer, (event) => {
     if (event.state == "Pressed") {
-      OpenInExplorer(currentDirectoryPath);
+      let path = currentDirectoryPath;
+
+      debug(
+        `replace ${path} || ${path.charAt(path.length - 1)} || ${path.slice(
+          0,
+          -1
+        )}`
+      );
+      OpenInExplorer(path.slice(0, -1));
     }
   });
   await register(openWithPWSH, (event) => {

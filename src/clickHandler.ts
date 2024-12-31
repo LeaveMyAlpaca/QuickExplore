@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { debug } from "./main";
+import { debug, drawConnectedFiles } from "./main";
 
 export function CreateStartDirectoryInHere(path: string, name: string) {
   return invoke("addStartDirectories", {
@@ -9,23 +9,24 @@ export function CreateStartDirectoryInHere(path: string, name: string) {
 }
 export function OpenInVsCode(path: string) {
   invoke("RunCommand", {
-    command: `code "${path.replace("/", "\\")}"`,
+    command: `code "${path.replaceAll("/", "\\")}"`,
   });
 }
 export function OpenInExplorer(path: string) {
-  let comand = `explorer "${path.replace("/", "\\")}"`;
+  let command = `explorer "${path.replaceAll("/", "\\")}"`;
+  debug(command);
   invoke("RunCommand", {
-    command: comand,
+    command: command,
   });
 }
 export async function OpenFile(path: string) {
   invoke("RunCommand", {
-    command: `start "${path.replace("/", "\\")}"`,
+    command: `start "${path.replaceAll("/", "\\")}"`,
   });
 }
 export function OpenWithPWSH(path: string) {
   invoke("RunCommand", {
-    command: `powershell.exe -noexit -command "cd '${path.replace(
+    command: `powershell.exe -noexit -command "cd '${path.replaceAll(
       "/",
       "\\"
     )}'"`,

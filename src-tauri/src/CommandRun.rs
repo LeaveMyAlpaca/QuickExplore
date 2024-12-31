@@ -7,5 +7,5 @@ pub fn RunCommand(command: &str) {
         .output()
         .expect("failed to execute process");
 
-    println!("RunCommand {:?}", command);
+    println!("RunCommand {}", command);
 }
