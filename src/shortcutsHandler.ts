@@ -28,6 +28,8 @@ const goToHome = "Alt+u";
 const openWithVsCode = "Alt+c";
 const openWithExplorer = "Alt+e";
 const openWithPWSH = "Alt+p";
+const removeFile = "Alt+w";
+const newFile = "Alt+n";
 
 export async function RegisterAllShortcuts() {
   await register(goUpShortcut, (event) => {
@@ -89,6 +91,11 @@ export async function RegisterAllShortcuts() {
       }
     }
   });
+  await register(removeFile, (event) => {
+    if (event.state == "Pressed") {
+      RemoveFile(connectedFiles[selectedDirIndex].path);
+    }
+  });
 }
 export async function UnRegisterAllShortcuts() {
   await unregister([
@@ -100,5 +107,7 @@ export async function UnRegisterAllShortcuts() {
     openWithExplorer,
     openWithPWSH,
     openWithVsCode,
+    removeFile,
+    newFile,
   ]);
 }

@@ -63,3 +63,8 @@ pub fn move_back_from_current_directory(dir: String) -> String {
     }
     return outputPath.to_string();
 }
+
+#[tauri::command]
+pub fn remove_file(dir: String) {
+    fs::remove_file(dir);
+}

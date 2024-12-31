@@ -85,7 +85,8 @@ pub fn run() {
             connectedFilesManager::get_connected_files,
             connectedFilesManager::move_back_from_current_directory,
             CommandRun::RunCommand,
-            homeDirectories::addStartDirectories
+            homeDirectories::addStartDirectories,
+            connectedFilesManager::remove_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

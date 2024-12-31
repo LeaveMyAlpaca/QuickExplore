@@ -32,3 +32,9 @@ export function OpenWithPWSH(path: string) {
     )}'"`,
   });
 }
+export function RemoveFile(path: string) {
+  invoke("remove_file", {
+    dir: path,
+  });
+  drawConnectedFiles();
+}
