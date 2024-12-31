@@ -26,7 +26,7 @@ export let currentSimilarStartDirectories: fileStat[];
 export let selectedDirIndex: number = 0;
 let maxSelectedDirIndex = 0;
 export let selectingStartDirectory: boolean = true;
-let currentDirectoryPath: String = "";
+export let currentDirectoryPath: string = "";
 
 function focus() {
   document.getElementById("textInput")?.focus();

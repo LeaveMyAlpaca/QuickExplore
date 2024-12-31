@@ -1,6 +1,7 @@
 import { register, unregister } from "@tauri-apps/plugin-global-shortcut";
 import {
   connectedFiles,
+  currentDirectoryPath,
   currentSimilarStartDirectories,
   GoBackToHomeDirectories,
   moveBackADirectory,
@@ -62,11 +63,7 @@ export async function RegisterAllShortcuts() {
   });
   await register(openWithExplorer, (event) => {
     if (event.state == "Pressed") {
-      if (!selectingStartDirectory) {
-        OpenInExplorer(connectedFiles[selectedDirIndex].path);
-      } else {
-        OpenInExplorer(currentSimilarStartDirectories[selectedDirIndex].path);
-      }
+      OpenInExplorer(currentDirectoryPath);
     }
   });
   await register(openWithPWSH, (event) => {
