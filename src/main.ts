@@ -1,7 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getIconPathForExtension } from "./iconsHandler";
-import { OpenInVsCode, CreateStartDirectoryInHere } from "./clickHandler";
+import {
+  OpenInVsCode,
+  CreateStartDirectoryInHere,
+  OpenFile,
+} from "./clickHandler";
 import {
   RegisterAllShortcuts,
   UnRegisterAllShortcuts,
@@ -13,6 +17,7 @@ class fileStat {
   public icon_path: string = "";
   public distance: number = 0;
   public extension: string = "";
+  public is_folder: boolean = false;
 }
 
 export let connectedFiles: fileStat[];
@@ -185,7 +190,7 @@ function setupEvents() {
     "backToHmeDirectoryButton"
   ) as HTMLElement;
   homeDir.onclick = () => {
-    goBackToHomeDirectories();
+    GoBackToHomeDirectories();
   };
 
   listen("focus", (event) => {
@@ -217,14 +222,27 @@ export function MoveUP() {
 }
 export function MoveRight() {
   if (currentSimilarStartDirectories.length == 0) return;
+
   if (selectingStartDirectory) {
     selectingStartDirectory = false;
 
-    currentDirectoryPath =
-      currentSimilarStartDirectories[selectedDirIndex].path;
+    const file = currentSimilarStartDirectories[selectedDirIndex];
+    debug(`MoveRight ${file.name} ${file.is_folder}`);
+
+    if (!file.is_folder) {
+      OpenFile(file.path);
+      return;
+    }
+    currentDirectoryPath = file.path;
   } else {
-    currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}/`;
+    const file = connectedFiles[selectedDirIndex];
+    if (!file.is_folder) {
+      OpenFile(file.path);
+      return;
+    }
+    currentDirectoryPath = `${file.path}/`;
   }
+
   selectedDirIndex = 0;
   drawConnectedFiles();
 

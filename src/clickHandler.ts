@@ -17,9 +17,9 @@ export function OpenInExplorer(path: string) {
     command: `explorer ${path}`,
   });
 }
-export function OpenFile(path: string) {
+export async function OpenFile(path: string) {
   invoke("RunCommand", {
-    command: `${path}`,
+    command: `start ${path}`,
   });
 }
 export function OpenWithPWSH(path: string) {
