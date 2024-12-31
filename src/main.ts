@@ -1,12 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import {
-  register,
-  unregister,
-  unregisterAll,
-} from "@tauri-apps/plugin-global-shortcut";
 import { getIconPathForExtension } from "./iconsHandler";
 import { OpenInVsCode, CreateStartDirectoryInHere } from "./clickHandler";
+import {
+  RegisterAllShortcuts,
+  UnRegisterAllShortcuts,
+} from "./shortcutsHandler";
 
 class fileStat {
   public name: string = "";
@@ -16,12 +15,20 @@ class fileStat {
   public extension: string = "";
 }
 
-async function focus() {
+export let connectedFiles: fileStat[];
+let maxSimilarStartDictionariesLength = 4;
+export let currentSimilarStartDirectories: fileStat[];
+export let selectedDirIndex: number = 0;
+let maxSelectedDirIndex = 0;
+export let selectingStartDirectory: boolean = true;
+let currentDirectoryPath: String = "";
+
+function focus() {
   document.getElementById("textInput")?.focus();
-  await RegisterAllShortcuts();
+  RegisterAllShortcuts();
 }
-async function unFocus() {
-  await unregister(["Alt+k", "Alt+j", "Alt+l", "Alt+h"]);
+function unFocus() {
+  UnRegisterAllShortcuts();
   debug("unFocus");
 }
 
@@ -30,7 +37,6 @@ export function debug(value: string) {
     value: value,
   });
 }
-let currentSimilarStartDirectories: fileStat[];
 async function textInputChanged(event: Event) {
   if (selectingStartDirectory) {
     const text = (event.target as HTMLInputElement).value;
@@ -46,7 +52,6 @@ async function textInputChanged(event: Event) {
     drawConnectedFiles();
   }
 }
-let maxSimilarStartDictionariesLength = 4;
 function drawSimilarStartingDirectories() {
   const SelectStartDirectory = document.getElementById(
     "SelectStartDirectory"
@@ -121,7 +126,6 @@ function createFileDisplay(
 
   layout.append(fileDisplay);
 }
-let connectedFiles: fileStat[];
 async function drawConnectedFiles() {
   var layout = document.getElementById("filesDisplayLayout") as HTMLElement;
   layout.innerHTML = "";
@@ -147,15 +151,7 @@ async function drawConnectedFiles() {
     );
   }
 }
-async function moveBackADirectory() {
-  debug(`MoveBack ${currentDirectoryPath}`);
-  let moveBack = (await invoke("move_back_from_current_directory", {
-    dir: currentDirectoryPath,
-  })) as string;
-  debug(`MoveBack after ${moveBack}`);
-  currentDirectoryPath = moveBack;
-  drawConnectedFiles();
-}
+
 function appendButton(
   parent: HTMLElement,
   onClick: () => void,
@@ -179,7 +175,68 @@ function appendButton(
 
   parent.append(button);
 }
-async function goBackToHomeDirectories() {
+
+function setupEvents() {
+  const inputElement = document.getElementById("textInput") as HTMLInputElement;
+  inputElement.oninput = (event: Event) => {
+    textInputChanged(event);
+  };
+  const homeDir = document.getElementById(
+    "backToHmeDirectoryButton"
+  ) as HTMLElement;
+  homeDir.onclick = () => {
+    goBackToHomeDirectories();
+  };
+
+  listen("focus", (event) => {
+    focus();
+  });
+  listen("unFocus", (event) => {
+    unFocus();
+  });
+}
+
+export async function moveBackADirectory() {
+  if (selectingStartDirectory) return;
+
+  let moveBack = (await invoke("move_back_from_current_directory", {
+    dir: currentDirectoryPath,
+  })) as string;
+  currentDirectoryPath = moveBack;
+  drawConnectedFiles();
+}
+export function MoveDown() {
+  selectedDirIndex = Math.min(selectedDirIndex + 1, maxSelectedDirIndex - 1);
+  if (selectingStartDirectory) drawSimilarStartingDirectories();
+  else drawConnectedFiles();
+}
+export function MoveUP() {
+  selectedDirIndex = Math.max(selectedDirIndex - 1, 0);
+  if (selectingStartDirectory) drawSimilarStartingDirectories();
+  else drawConnectedFiles();
+}
+export function MoveRight() {
+  if (currentSimilarStartDirectories.length == 0) return;
+  if (selectingStartDirectory) {
+    selectingStartDirectory = false;
+
+    currentDirectoryPath =
+      currentSimilarStartDirectories[selectedDirIndex].path;
+  } else {
+    currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}/`;
+  }
+  selectedDirIndex = 0;
+  drawConnectedFiles();
+
+  const inputElement = document.getElementById("textInput") as HTMLInputElement;
+  inputElement.value = "";
+
+  const SelectStartDirectory = document.getElementById(
+    "SelectStartDirectory"
+  ) as HTMLInputElement;
+  SelectStartDirectory.hidden = true;
+}
+export async function GoBackToHomeDirectories() {
   const inputElement = document.getElementById("textInput") as HTMLInputElement;
   inputElement.value = "";
   inputElement.hidden = false;
@@ -187,88 +244,8 @@ async function goBackToHomeDirectories() {
   currentSimilarStartDirectories = await invoke("search_starting_directories", {
     text: "",
   });
-  debug(
-    `currentSimilarStartDirectories ${currentSimilarStartDirectories.length}`
-  );
 
   drawSimilarStartingDirectories();
 }
-focus();
 
-listen("focus", (event) => {
-  focus();
-});
-
-listen("unFocus", (event) => {
-  unFocus();
-});
-
-const inputElement = document.getElementById("textInput") as HTMLInputElement;
-inputElement.oninput = (event: Event) => {
-  textInputChanged(event);
-};
-const homeDir = document.getElementById(
-  "backToHmeDirectoryButton"
-) as HTMLElement;
-homeDir.onclick = () => {
-  goBackToHomeDirectories();
-};
-
-let selectedDirIndex: number = 0;
-
-let maxSelectedDirIndex = 0;
-let selectingStartDirectory: boolean = true;
-let currentDirectoryPath: String = "";
-
-async function RegisterAllShortcuts() {
-  await register("Alt+k", (event) => {
-    if (event.state == "Pressed") {
-      selectedDirIndex = Math.max(selectedDirIndex - 1, 0);
-      if (selectingStartDirectory) drawSimilarStartingDirectories();
-      else drawConnectedFiles();
-    }
-  });
-  await register("Alt+j", (event) => {
-    if (event.state == "Pressed") {
-      selectedDirIndex = Math.min(
-        selectedDirIndex + 1,
-        maxSelectedDirIndex - 1
-      );
-      if (selectingStartDirectory) drawSimilarStartingDirectories();
-      else drawConnectedFiles();
-    }
-  });
-
-  register("Alt+l", (event) => {
-    if (
-      event.state == "Pressed" &&
-      currentSimilarStartDirectories.length != 0
-    ) {
-      if (selectingStartDirectory) {
-        selectingStartDirectory = false;
-
-        currentDirectoryPath =
-          currentSimilarStartDirectories[selectedDirIndex].path;
-      } else {
-        currentDirectoryPath = `${connectedFiles[selectedDirIndex].path}/`;
-      }
-      selectedDirIndex = 0;
-      drawConnectedFiles();
-
-      const inputElement = document.getElementById(
-        "textInput"
-      ) as HTMLInputElement;
-      inputElement.value = "";
-
-      const SelectStartDirectory = document.getElementById(
-        "SelectStartDirectory"
-      ) as HTMLInputElement;
-      SelectStartDirectory.hidden = true;
-    }
-  });
-  await register("Alt+h", (event) => {
-    if (event.state == "Pressed" && !selectingStartDirectory) {
-      moveBackADirectory();
-    }
-  });
-}
+setupEvents();
