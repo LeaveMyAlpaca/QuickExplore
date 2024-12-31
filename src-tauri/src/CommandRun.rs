@@ -1,11 +1,11 @@
 use std::process::Command;
 #[tauri::command]
 pub fn RunCommand(command: &str) {
-    let output = Command::new("cmd")
+    //! could be dangerous
+    Command::new("pwsh")
         .args(["/C", command])
         .output()
         .expect("failed to execute process");
 
-    let hello = output.stdout;
-    println!("RunCommand {:?}", hello);
+    println!("RunCommand {:?}", command);
 }
