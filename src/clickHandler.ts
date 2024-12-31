@@ -9,21 +9,21 @@ export function CreateStartDirectoryInHere(path: string, name: string) {
 }
 export function OpenInVsCode(path: string) {
   invoke("RunCommand", {
-    command: `code ${path}`,
+    command: `code "${path}"`,
   });
 }
 export function OpenInExplorer(path: string) {
   invoke("RunCommand", {
-    command: `explorer ${path}`,
+    command: `explorer "${path}"`,
   });
 }
 export async function OpenFile(path: string) {
   invoke("RunCommand", {
-    command: `start ${path}`,
+    command: `start "${path}"`,
   });
 }
 export function OpenWithPWSH(path: string) {
   invoke("RunCommand", {
-    command: `powershell.exe -noexit -command "cd ${path}"`,
+    command: `powershell.exe -noexit -command "cd '${path}'"`,
   });
 }
