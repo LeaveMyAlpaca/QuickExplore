@@ -53,6 +53,7 @@ pub fn get_starting_directories() -> Vec<fuzzy::fileStat> {
             icon_path: icon_path.replace("\r", ""),
             distance: 0,
             extension: "".to_string(),
+            is_folder: true,
         });
     }
     println!(
@@ -71,6 +72,7 @@ pub fn addStartDirectories(path: String, name: String) {
         icon_path: "".to_string(),
         distance: 0,
         extension: "".to_string(),
+        is_folder: true,
     });
     save_starting_directories(&startIngDirectories);
 }

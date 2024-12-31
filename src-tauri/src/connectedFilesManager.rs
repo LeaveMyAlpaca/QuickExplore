@@ -16,8 +16,10 @@ pub fn get_connected_files(
     }
 
     for dir in paths {
-        let path = dir.unwrap().path().as_path().to_str().unwrap().to_string();
-        let splittedPath = path.split(&['/', '\\']);
+        let path = dir.unwrap().path();
+        let isFolder = path.as_path().is_dir();
+        let pathString = path.as_path().to_str().unwrap().to_string();
+        let splittedPath = pathString.split(&['/', '\\']);
         let fileName = splittedPath.last().unwrap();
         let nameAndExtension = fileName.split(".");
 
@@ -28,11 +30,12 @@ pub fn get_connected_files(
             extension = "".to_string();
         }
         return_vec.push(FuzzyTextSearch::fileStat {
-            path: path.to_string(),
+            path: pathString.to_string(),
             name: fileName.to_string(),
             extension,
             icon_path: "".to_string(),
             distance: 0,
+            is_folder: isFolder,
         });
     }
 

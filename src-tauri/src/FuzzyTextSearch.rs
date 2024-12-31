@@ -30,6 +30,7 @@ pub struct fileStat {
     pub icon_path: String,
     pub distance: usize,
     pub extension: String,
+    pub is_folder: bool,
 }
 
 fn WagnerFischerDistance(s1: String, s2: String) -> usize {
