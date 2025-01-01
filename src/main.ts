@@ -42,7 +42,7 @@ export function debug(value: string) {
     value: value,
   });
 }
-async function textInputChanged(event: Event) {
+async function textInput(event: Event) {
   if (selectingStartDirectory) {
     const text = (event.target as HTMLInputElement).value;
 
@@ -54,6 +54,23 @@ async function textInputChanged(event: Event) {
     );
     drawSimilarStartingDirectories();
   } else {
+    drawConnectedFiles();
+  }
+}
+async function textInputOnChanged(event: Event) {
+  if (!enterFileName.hidden) {
+    enterFileName.hidden = true;
+    const text = (event.target as HTMLInputElement).value;
+    var path = currentDirectoryPath + text;
+    await invoke("create_file", {
+      dir: path,
+    });
+
+    const inputElement = document.getElementById(
+      "textInput"
+    ) as HTMLInputElement;
+    inputElement.value = "";
+
     drawConnectedFiles();
   }
 }
@@ -74,11 +91,7 @@ function drawSimilarStartingDirectories() {
   maxSelectedDirIndex = displaysLength;
   for (let index = 0; index < displaysLength; index++) {
     const startDirectory = currentSimilarStartDirectories[index];
-    createFileDisplay(
-      startDirectory.name,
-      startDirectory.icon_path,
-      selectedDirIndex == index
-    );
+    createFileDisplay(startDirectory.name, "", selectedDirIndex == index);
   }
 }
 
@@ -184,7 +197,10 @@ function appendButton(
 function setupEvents() {
   const inputElement = document.getElementById("textInput") as HTMLInputElement;
   inputElement.oninput = (event: Event) => {
-    textInputChanged(event);
+    textInput(event);
+  };
+  inputElement.onchange = (event: Event) => {
+    textInputOnChanged(event);
   };
   const homeDir = document.getElementById(
     "backToHmeDirectoryButton"
@@ -255,6 +271,8 @@ export function MoveRight() {
   SelectStartDirectory.hidden = true;
 }
 export async function GoBackToHomeDirectories() {
+  enterFileName.hidden = false;
+
   const inputElement = document.getElementById("textInput") as HTMLInputElement;
   inputElement.value = "";
   inputElement.hidden = false;
@@ -265,5 +283,13 @@ export async function GoBackToHomeDirectories() {
 
   drawSimilarStartingDirectories();
 }
+export function NewFile() {
+  document.getElementById("textInput")?.focus();
+  enterFileName.hidden = false;
+}
 
 setupEvents();
+let enterFileName = document.getElementById(
+  "enterFileName"
+) as HTMLInputElement;
+enterFileName.hidden = true;

@@ -9,6 +9,7 @@ import {
   MoveDown,
   MoveRight,
   MoveUP,
+  NewFile,
   selectedDirIndex,
   selectingStartDirectory,
 } from "./main";
@@ -94,6 +95,11 @@ export async function RegisterAllShortcuts() {
   await register(removeFile, (event) => {
     if (event.state == "Pressed") {
       RemoveFile(connectedFiles[selectedDirIndex].path);
+    }
+  });
+  await register(newFile, (event) => {
+    if (event.state == "Pressed") {
+      NewFile();
     }
   });
 }

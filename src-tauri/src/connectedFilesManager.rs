@@ -1,5 +1,5 @@
 use crate::{homeDirectories, FuzzyTextSearch};
-use std::fs::{self, ReadDir};
+use std::fs::{self, File, ReadDir};
 #[tauri::command]
 pub fn get_connected_files(
     mut currentPath: String,
@@ -67,4 +67,9 @@ pub fn move_back_from_current_directory(dir: String) -> String {
 #[tauri::command]
 pub fn remove_file(dir: String) {
     fs::remove_file(dir);
+}
+#[tauri::command]
+pub fn create_file(dir: String) {
+    println!("create_file -> {}", dir);
+    File::create(dir).expect("Creating file wasn't success full ");
 }
