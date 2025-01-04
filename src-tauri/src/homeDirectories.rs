@@ -3,7 +3,7 @@ use std::fs::{self, File};
 use std::io::prelude::*;
 use std::path::{self, Path, PathBuf};
 const HOME_DIRECTORIES_SAVE_FILE_PATH_BUILD: &str = "./Save files/HomeDirectories.txt";
-const HOME_DIRECTORIES_SAVE_FILE_PATH_DEV: &str = "./../_Save files/HomeDirectories.txt";
+const HOME_DIRECTORIES_SAVE_FILE_PATH_DEV: &str = "./../Save files/HomeDirectories.txt";
 
 const HOME_DIRECTORIES_SAVE_SIZE: f64 = 3_f64;
 

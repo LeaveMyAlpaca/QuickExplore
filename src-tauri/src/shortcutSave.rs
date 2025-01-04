@@ -3,7 +3,7 @@ use std::{fs::File, io::Write};
 use crate::homeDirectories::{convertInToAbsolutePath, get_save_file_content};
 
 const SHORTCUT_SAVE_FILE_PATH_BUILD: &str = "./Save files/Shortcuts.txt";
-const SHORTCUT_SAVE_FILE_PATH_DEV: &str = "./../_Save files/Shortcuts.txt";
+const SHORTCUT_SAVE_FILE_PATH_DEV: &str = "./../Save files/Shortcuts.txt";
 
 #[tauri::command]
 pub fn save_shortcuts(shortcuts: Vec<String>) {
