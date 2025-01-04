@@ -2,11 +2,12 @@ use std::{fs::File, io::Write};
 
 use crate::homeDirectories::{convertInToAbsolutePath, get_save_file_content};
 
-const SHORTCUT_SAVE_FILE_PATH: &str = "./Save files/Shortcuts.txt";
+const SHORTCUT_SAVE_FILE_PATH_BUILD: &str = "./Save files/Shortcuts.txt";
+const SHORTCUT_SAVE_FILE_PATH_DEV: &str = "./../_Save files/Shortcuts.txt";
 
 #[tauri::command]
 pub fn save_shortcuts(shortcuts: Vec<String>) {
-    let absolutePath = convertInToAbsolutePath(SHORTCUT_SAVE_FILE_PATH);
+    let absolutePath = convertInToAbsolutePath(&GetSavePath());
 
     let mut saveContent: String = String::new();
 
@@ -19,7 +20,7 @@ pub fn save_shortcuts(shortcuts: Vec<String>) {
 }
 #[tauri::command]
 pub fn get_saved_shortcuts() -> Vec<String> {
-    let save_string: String = get_save_file_content(SHORTCUT_SAVE_FILE_PATH);
+    let save_string: String = get_save_file_content(&GetSavePath());
 
     let splitted_string = save_string.split("\n").collect::<Vec<_>>();
 
@@ -29,4 +30,20 @@ pub fn get_saved_shortcuts() -> Vec<String> {
     }
 
     return returnVec;
+}
+fn GetSavePath() -> String {
+    println!("GetHomeDirPath 0",);
+
+    let absolutePath = convertInToAbsolutePath("./");
+    let splittedPath = absolutePath
+        .to_str()
+        .unwrap()
+        .split("\\")
+        .collect::<Vec<_>>();
+    let lastDirName = splittedPath[splittedPath.len() - 1];
+    if (lastDirName == "src-tauri") {
+        return SHORTCUT_SAVE_FILE_PATH_DEV.to_string();
+    } else {
+        return SHORTCUT_SAVE_FILE_PATH_BUILD.to_string();
+    }
 }

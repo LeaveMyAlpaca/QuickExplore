@@ -2,7 +2,8 @@ use crate::FuzzyTextSearch as fuzzy;
 use std::fs::{self, File};
 use std::io::prelude::*;
 use std::path::{self, Path, PathBuf};
-const HOME_DIRECTORIES_SAVE_FILE_PATH: &str = "./Save files/HomeDirectories.txt";
+const HOME_DIRECTORIES_SAVE_FILE_PATH_BUILD: &str = "./Save files/HomeDirectories.txt";
+const HOME_DIRECTORIES_SAVE_FILE_PATH_DEV: &str = "./../_Save files/HomeDirectories.txt";
 
 const HOME_DIRECTORIES_SAVE_SIZE: f64 = 3_f64;
 
@@ -13,7 +14,7 @@ pub fn get_save_file_content(path: &str) -> String {
 }
 
 pub fn save_starting_directories(toSave: &Vec<fuzzy::fileStat>) {
-    let absolutePath = convertInToAbsolutePath(HOME_DIRECTORIES_SAVE_FILE_PATH);
+    let absolutePath = convertInToAbsolutePath(&GetHomeDirPath());
 
     println!("toSave {}", toSave.len());
     let mut saveFileContent = String::new();
@@ -35,9 +36,25 @@ pub fn convertInToAbsolutePath(localPathString: &str) -> PathBuf {
     let absolutePath = fs::canonicalize(&localPath).unwrap();
     absolutePath
 }
+fn GetHomeDirPath() -> String {
+    println!("GetHomeDirPath 0",);
+
+    let absolutePath = convertInToAbsolutePath("./");
+    let splittedPath = absolutePath
+        .to_str()
+        .unwrap()
+        .split("\\")
+        .collect::<Vec<_>>();
+    let lastDirName = splittedPath[splittedPath.len() - 1];
+    if (lastDirName == "src-tauri") {
+        return HOME_DIRECTORIES_SAVE_FILE_PATH_DEV.to_string();
+    } else {
+        return HOME_DIRECTORIES_SAVE_FILE_PATH_BUILD.to_string();
+    }
+}
 
 pub fn get_starting_directories() -> Vec<fuzzy::fileStat> {
-    let save_string: String = get_save_file_content(HOME_DIRECTORIES_SAVE_FILE_PATH);
+    let save_string: String = get_save_file_content(&GetHomeDirPath());
 
     let splitted_string = save_string.split("\n").collect::<Vec<_>>();
     let saved_home_directories_count: u64 =
