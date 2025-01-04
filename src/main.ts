@@ -293,14 +293,20 @@ export function NewFile() {
   document.getElementById("textInput")?.focus();
   enterFileName.hidden = false;
 }
+debug("ts 1");
 setupEvents();
+debug("ts 2");
 
 let enterFileName = document.getElementById(
   "enterFileName"
 ) as HTMLInputElement;
 enterFileName.hidden = true;
+debug("ts 3");
 
 currentSimilarStartDirectories = await invoke("search_starting_directories", {
   text: "",
 });
+debug("ts 4");
+
 drawSimilarStartingDirectories();
+debug("ts 5");

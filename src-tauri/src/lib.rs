@@ -4,6 +4,7 @@ mod connectedFilesManager;
 pub mod fuzzyTextSearch;
 mod homeDirectories;
 mod shortcutSave;
+use homeDirectories::convertInToAbsolutePath;
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
 use window_vibrancy::*;
@@ -14,6 +15,10 @@ fn debug(value: &str) {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    println!(
+        "Start up! {}",
+        convertInToAbsolutePath("./").to_str().unwrap()
+    );
     tauri::Builder::default()
         .setup(|app| {
             #[cfg(desktop)]

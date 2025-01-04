@@ -248,6 +248,7 @@ async function loadSavedShortcuts() {
   openWithVsCode = saves[7];
   removeFile = saves[8];
   newFile = saves[9];
+  skipDumb;
 }
 let AllShortcutsArray = () => [
   goUpShortcut,
@@ -261,7 +262,7 @@ let AllShortcutsArray = () => [
   removeFile,
   newFile,
 ];
-
+const skipDumb = () => loadSavedShortcuts;
 const settings = document.getElementById("settings") as HTMLElement;
 const mainScreen = document.getElementById("mainScreen") as HTMLElement;
 

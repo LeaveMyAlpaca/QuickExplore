@@ -2,11 +2,13 @@ use crate::FuzzyTextSearch as fuzzy;
 use std::fs::{self, File};
 use std::io::prelude::*;
 use std::path::{self, Path, PathBuf};
-const HOME_DIRECTORIES_SAVE_FILE_PATH: &str = "./../Save files/HomeDirectories.txt";
+const HOME_DIRECTORIES_SAVE_FILE_PATH: &str = "./Save files/HomeDirectories.txt";
+
 const HOME_DIRECTORIES_SAVE_SIZE: f64 = 3_f64;
 
 pub fn get_save_file_content(path: &str) -> String {
     let absolutePath = convertInToAbsolutePath(path);
+    println!("get_save_file_content {}", absolutePath.to_str().unwrap());
     return fs::read_to_string(absolutePath).expect("Should have been able to read the file");
 }
 
