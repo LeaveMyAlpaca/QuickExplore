@@ -7,6 +7,7 @@ import {
   OpenFile,
 } from "./clickHandler";
 import {
+  DrawSettingsUI,
   RegisterAllShortcuts,
   UnRegisterAllShortcuts,
 } from "./shortcutsHandler";
@@ -74,7 +75,7 @@ async function textInputOnChanged(event: Event) {
     drawConnectedFiles();
   }
 }
-function drawSimilarStartingDirectories() {
+export function drawSimilarStartingDirectories() {
   const SelectStartDirectory = document.getElementById(
     "SelectStartDirectory"
   ) as HTMLInputElement;
@@ -111,6 +112,7 @@ function createFileDisplay(
   const icon = document.createElement("img");
   icon.src = iconSrc;
   icon.className = "fileIcon";
+
   fileDisplay.append(icon);
   if (highlight) {
     let scrollInToView = document.getElementById(
@@ -208,6 +210,10 @@ function setupEvents() {
   homeDir.onclick = () => {
     GoBackToHomeDirectories();
   };
+  const goToSettings = document.getElementById("goToSettings") as HTMLElement;
+  goToSettings.onclick = () => {
+    DrawSettingsUI();
+  };
 
   listen("focus", (event) => {
     focus();
@@ -271,7 +277,7 @@ export function MoveRight() {
   SelectStartDirectory.hidden = true;
 }
 export async function GoBackToHomeDirectories() {
-  enterFileName.hidden = false;
+  enterFileName.hidden = true;
 
   const inputElement = document.getElementById("textInput") as HTMLInputElement;
   inputElement.value = "";
@@ -287,9 +293,14 @@ export function NewFile() {
   document.getElementById("textInput")?.focus();
   enterFileName.hidden = false;
 }
-
 setupEvents();
+
 let enterFileName = document.getElementById(
   "enterFileName"
 ) as HTMLInputElement;
 enterFileName.hidden = true;
+
+currentSimilarStartDirectories = await invoke("search_starting_directories", {
+  text: "",
+});
+drawSimilarStartingDirectories();

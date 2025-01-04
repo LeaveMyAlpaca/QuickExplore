@@ -5,7 +5,7 @@ use std::path::{self, Path, PathBuf};
 const HOME_DIRECTORIES_SAVE_FILE_PATH: &str = "./../Save files/HomeDirectories.txt";
 const HOME_DIRECTORIES_SAVE_SIZE: f64 = 3_f64;
 
-fn get_save_file_content(path: &str) -> String {
+pub fn get_save_file_content(path: &str) -> String {
     let absolutePath = convertInToAbsolutePath(path);
     return fs::read_to_string(absolutePath).expect("Should have been able to read the file");
 }
@@ -13,7 +13,6 @@ fn get_save_file_content(path: &str) -> String {
 pub fn save_starting_directories(toSave: &Vec<fuzzy::fileStat>) {
     let absolutePath = convertInToAbsolutePath(HOME_DIRECTORIES_SAVE_FILE_PATH);
 
-    let file = File::create(absolutePath);
     println!("toSave {}", toSave.len());
     let mut saveFileContent = String::new();
     for saveFile in toSave {
@@ -24,6 +23,7 @@ pub fn save_starting_directories(toSave: &Vec<fuzzy::fileStat>) {
             + &saveFile.icon_path
             + "\n");
     }
+    let file = File::create(absolutePath);
 
     file.unwrap().write(saveFileContent.as_bytes());
 }

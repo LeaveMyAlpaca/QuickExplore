@@ -1,0 +1,17 @@
+.settingsLayout {
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.settingDisplay {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  padding: 3px;
+  border: 2px solid rgb(46, 46, 46);
+  border-radius: 3px;
+}

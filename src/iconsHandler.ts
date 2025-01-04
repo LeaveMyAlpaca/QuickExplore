@@ -14,6 +14,7 @@ iconsForExtensionsMap.set("json", "/src/assets/fileIcons/json.svg");
 iconsForExtensionsMap.set("png", "/src/assets/fileIcons/image.svg");
 iconsForExtensionsMap.set("jpg", "/src/assets/fileIcons/image.svg");
 iconsForExtensionsMap.set("svg", "/src/assets/fileIcons/image.svg");
+
 export function getIconPathForExtension(extension: string): string {
   let path = iconsForExtensionsMap.get(extension);
   if (path !== undefined) return path;

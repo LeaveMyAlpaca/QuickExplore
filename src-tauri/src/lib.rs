@@ -3,6 +3,7 @@ mod FuzzyTextSearch;
 mod connectedFilesManager;
 pub mod fuzzyTextSearch;
 mod homeDirectories;
+mod shortcutSave;
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
 use window_vibrancy::*;
@@ -87,7 +88,9 @@ pub fn run() {
             CommandRun::RunCommand,
             homeDirectories::addStartDirectories,
             connectedFilesManager::remove_file,
-            connectedFilesManager::create_file
+            connectedFilesManager::create_file,
+            shortcutSave::save_shortcuts,
+            shortcutSave::get_saved_shortcuts
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/src/styles.css" />
     <link rel="stylesheet" href="/src/fileDisplay.css" />
     <link rel="stylesheet" href="/src/textInput.scss" />
+    <link rel="stylesheet" href="/src/Settings.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
     <script type="module" src="/src/main.ts" defer></script>
@@ -17,39 +18,58 @@
   </head>
 
   <body id="body">
-    <h1 style="justify-self: center" id="enterFileName">Enter file name</h1>
-    <h1 style="justify-self: center" id="SelectStartDirectory">
-      Select start directory:
-    </h1>
-    <div class="upperBar">
-      <button class="button" id="backToHmeDirectoryButton">
+    <div class="settings" id="settings" hidden>
+      <button
+        class="button"
+        style="position: absolute; right: 5px"
+        id="backToMain"
+      >
         <img src="/src/assets/home.svg" />
       </button>
-    </div>
-    <div class="textInputContainer">
-      <input
-        class="textInput"
-        id="textInput"
-        placeholder="Enter a name..."
-        autocomplete="off"
-        autofocus
-      />
+      <div class="settingsLayout" id="settingsLayout"></div>
     </div>
 
-    <div class="filesDisplayLayout" id="filesDisplayLayout">
-      <!-- <div class="fileDisplay" id="fileDisplay">
+    <div class="mainScreen" id="mainScreen">
+      <h1 style="justify-self: center" id="enterFileName">Enter file name</h1>
+      <h1 style="justify-self: center" id="SelectStartDirectory">
+        Select start directory:
+      </h1>
+
+      <div class="upperBar">
+        <button class="button" id="backToHmeDirectoryButton">
+          <img src="/src/assets/home.svg" />
+        </button>
+        <button class="button" id="goToSettings">
+          <img
+            src="/src/assets/Button icons/settings_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg"
+          />
+        </button>
+      </div>
+      <div class="textInputContainer">
+        <input
+          class="textInput"
+          id="textInput"
+          placeholder="Enter a name..."
+          autocomplete="off"
+          autofocus
+        />
+      </div>
+
+      <div class="filesDisplayLayout" id="filesDisplayLayout">
+        <!-- <div class="fileDisplay" id="fileDisplay">
       <img src="src/assets/tauri.svg" class="fileIcon">
       <h2 id="fileName">Test name</h4>
       <input type="button" class="fileDisplayButton" src="./src/assets/tauri.svg" />
       <input type="button" class="fileDisplayButton" src="./src/assets/tauri.svg" />
     </div> -->
+      </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <h1 id="scrollInToView" style="color: rgba(0, 0, 0, 0)">_</h1>
     </div>
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <h1 id="scrollInToView" style="color: rgba(0, 0, 0, 0)">_</h1>
   </body>
 </html>
