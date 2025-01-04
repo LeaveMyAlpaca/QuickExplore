@@ -22,6 +22,9 @@
   flex-direction: column;
   gap: 10px;
 }
+.testO {
+  content: url("/src/assets/vite.svg");
+}
 /* Tooltip text */
 .tooltip {
   visibility: hidden;

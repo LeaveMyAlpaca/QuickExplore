@@ -1,0 +1,53 @@
+.folderIcon {
+  width: 50px;
+
+  content: url("/src/assets/folder.svg");
+}
+.textIcon {
+  width: 50px;
+  content: url("/src/assets/text.svg");
+}
+.codeIcon {
+  width: 50px;
+  content: url("/src/assets/code.svg");
+}
+.cssIcon {
+  width: 50px;
+  content: url("/src/assets/css.svg");
+}
+.csIcon {
+  width: 50px;
+  content: url("/src/assets/cs.svg");
+}
+.htmlIcon {
+  width: 50px;
+  content: url("/src/assets/html.svg");
+}
+.jsIcon {
+  width: 50px;
+  content: url("/src/assets/js.svg");
+}
+.zipIcon {
+  width: 50px;
+  content: url("/src/assets/zip.svg");
+}
+.gitIcon {
+  width: 50px;
+  content: url("/src/assets/git.svg");
+}
+.jsonIcon {
+  width: 50px;
+  content: url("/src/assets/json.svg");
+}
+.imageIcon {
+  width: 50px;
+  content: url("/src/assets/image.svg");
+}
+
+.unknown {
+  width: 50px;
+  content: url("/src/assets/unknown.svg");
+}
+.vsCodeIcon {
+  content: url("/src/assets/Visual-Studio-Code-Logo-1.png");
+}

@@ -110,9 +110,9 @@ function createFileDisplay(
   fileDisplay.className = "fileDisplay";
 
   const icon = document.createElement("img");
-  icon.src = iconSrc;
-  icon.className = "fileIcon";
-
+  icon.className = iconSrc;
+  /*   icon.className = "fileIcon";
+   */
   fileDisplay.append(icon);
   if (highlight) {
     let scrollInToView = document.getElementById(
@@ -131,7 +131,7 @@ function createFileDisplay(
     appendButton(
       fileDisplay,
       () => CreateStartDirectoryInHere(path, name),
-      "/src/assets/folder.svg",
+      "folderIcon",
       "add to start directories"
     );
   }
@@ -139,7 +139,7 @@ function createFileDisplay(
     appendButton(
       fileDisplay,
       () => OpenInVsCode(path),
-      "/src/assets/Visual-Studio-Code-Logo-1.png",
+      "vsCodeIcon",
       "open in vs code"
     );
   }
@@ -184,7 +184,7 @@ function appendButton(
   button.classList.add("button");
 
   const buttonsIcon = document.createElement("img");
-  buttonsIcon.src = src;
+  buttonsIcon.className = src;
   buttonsIcon.width = 50;
   buttonsIcon.height = 50;
   button.append(buttonsIcon);
