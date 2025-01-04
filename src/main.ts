@@ -131,7 +131,7 @@ function createFileDisplay(
     appendButton(
       fileDisplay,
       () => CreateStartDirectoryInHere(path, name),
-      "/src/assets/fileIcons/folder.svg",
+      "/src/assets/folder.svg",
       "add to start directories"
     );
   }
@@ -139,7 +139,7 @@ function createFileDisplay(
     appendButton(
       fileDisplay,
       () => OpenInVsCode(path),
-      "/src/assets/Button icons/vs code.png",
+      "/src/assets/Visual-Studio-Code-Logo-1.png",
       "open in vs code"
     );
   }
