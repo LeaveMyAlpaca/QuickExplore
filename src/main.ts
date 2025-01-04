@@ -215,10 +215,10 @@ function setupEvents() {
     DrawSettingsUI();
   };
 
-  listen("focus", (event) => {
+  listen("focus", () => {
     focus();
   });
-  listen("unFocus", (event) => {
+  listen("unFocus", () => {
     unFocus();
   });
 }

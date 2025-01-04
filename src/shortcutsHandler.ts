@@ -20,7 +20,6 @@ import {
   OpenWithPWSH,
   RemoveFile,
 } from "./clickHandler";
-import { event } from "@tauri-apps/api";
 import { invoke } from "@tauri-apps/api/core";
 
 let goUpShortcut = "Alt+k";
