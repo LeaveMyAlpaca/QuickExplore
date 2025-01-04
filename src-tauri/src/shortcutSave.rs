@@ -31,7 +31,7 @@ pub fn get_saved_shortcuts() -> Vec<String> {
 
     return returnVec;
 }
-fn GetSavePath() -> String {
+pub fn GetSavePath() -> String {
     println!("GetHomeDirPath 0",);
 
     let absolutePath = convertInToAbsolutePath("./");

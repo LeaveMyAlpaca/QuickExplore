@@ -36,7 +36,7 @@ pub fn convertInToAbsolutePath(localPathString: &str) -> PathBuf {
     let absolutePath = fs::canonicalize(&localPath).unwrap();
     absolutePath
 }
-fn GetHomeDirPath() -> String {
+pub fn GetHomeDirPath() -> String {
     println!("GetHomeDirPath 0",);
 
     let absolutePath = convertInToAbsolutePath("./");

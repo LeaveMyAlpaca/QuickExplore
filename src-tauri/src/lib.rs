@@ -4,6 +4,10 @@ mod connectedFilesManager;
 pub mod fuzzyTextSearch;
 mod homeDirectories;
 mod shortcutSave;
+use std::fs::{self, File};
+use std::io::Write;
+use std::path::PathBuf;
+
 use homeDirectories::convertInToAbsolutePath;
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
@@ -19,6 +23,7 @@ pub fn run() {
         "Start up! {}",
         convertInToAbsolutePath("./").to_str().unwrap()
     );
+    createNeededSaveFiles();
     tauri::Builder::default()
         .setup(|app| {
             #[cfg(desktop)]
@@ -106,4 +111,38 @@ fn search_starting_directories(text: String) -> Vec<FuzzyTextSearch::fileStat> {
     let allStartingDirectories: Vec<FuzzyTextSearch::fileStat> =
         homeDirectories::get_starting_directories();
     return FuzzyTextSearch::search(allStartingDirectories, text);
+}
+const FOLDER_BUILD: &str = "./";
+const FOLDER_DEV: &str = "./../";
+fn createNeededSaveFiles() {
+    let absolutePath = convertInToAbsolutePath("./");
+    let splittedPath = absolutePath
+        .to_str()
+        .unwrap()
+        .split("\\")
+        .collect::<Vec<_>>();
+    let lastDirName = splittedPath[splittedPath.len() - 1];
+    let folderPath;
+    if (lastDirName == "src-tauri") {
+        folderPath = FOLDER_DEV;
+    } else {
+        folderPath = FOLDER_BUILD;
+    }
+    let saveFolderPath = &(folderPath.to_string() + "/Save files");
+    let localPath = PathBuf::from(saveFolderPath);
+    let absolutePath = fs::canonicalize(&localPath);
+
+    if (absolutePath.is_err()) {
+        println!("createNeededSaveFiles - is_err");
+
+        fs::create_dir(saveFolderPath).unwrap();
+    }
+    let homeSavePath = homeDirectories::GetHomeDirPath();
+
+    if (!fs::exists(&homeSavePath).unwrap()) {
+        let mut file = File::create(homeSavePath).unwrap();
+        file.write("C\nC:\\\n\n".as_bytes()).unwrap();
+    }
+    let shortcutSavePath = shortcutSave::GetSavePath();
+    File::create(shortcutSavePath).unwrap();
 }

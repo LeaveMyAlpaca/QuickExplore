@@ -238,6 +238,8 @@ async function loadSavedShortcuts() {
   let saves: string[] = await invoke("get_saved_shortcuts", {
     shortcuts: AllShortcutsArray(),
   });
+  if (saves.length <= 3) return;
+
   goUpShortcut = saves[0];
   goDownShortcut = saves[1];
   goLeftShortcut = saves[2];
